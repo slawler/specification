@@ -162,7 +162,7 @@ function handleOtherSource(sourceLeaf, source, timestamp) {
 }
 
 function addValues(context, source, timestamp, pathValues) {
-  var len = pathValues.length;
+  var len = pathValues ? pathValues.length : 0;
   for (var i = 0; i < len; ++i) {
     addValue(context, source, timestamp, pathValues[i]);
   }
