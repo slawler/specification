@@ -113,17 +113,22 @@ FullSignalK.prototype.updateSource = function(context, source, timestamp) {
     this.sources[source.label].type = source.type;
   }
 
+  var sourceInTree = this.sources[source.label];
+  if (source.data) {
+    _.assign(sourceInTree, source.data)
+  }
+
   if (source.type === 'NMEA2000' || source.src) {
-    handleNmea2000Source(this.sources[source.label], source, timestamp);
+    handleNmea2000Source(sourceInTree, source, timestamp);
     return
   }
 
   if (source.type === 'NMEA0183' || source.sentence) {
-    handleNmea0183Source(this.sources[source.label], source, timestamp);
+    handleNmea0183Source(sourceInTree, source, timestamp);
     return
   }
 
-  handleOtherSource(this.sources[source.label], source, timestamp);
+  handleOtherSource(sourceInTree, source, timestamp);
 }
 
 function handleNmea2000Source(labelSource, source, timestamp) {
