@@ -1,8 +1,13 @@
 Signal K Specification
 ======================
+See the [latest published version](http://signalk.org/specification/).
 
 This repository contains the (working) specification for Signal K, defined in
-JSON Schema files.
+JSON Schema files, tests for the schema files and assorted JavaScript utilities
+for working with Signal K delta and full JSON data as well as validation
+utilities.
+
+[![Build Status](https://travis-ci.org/SignalK/specification.svg?branch=master)](https://travis-ci.org/SignalK/specification) [![Slack Chat](https://img.shields.io/badge/Chat-Slack-ff69b4.svg "Join us and help develop Signal K. Anyone is welcome!")](http://slack-invite.signalk.org/)
 
 Signal K
 --------
@@ -52,6 +57,8 @@ https://toolchain.gitbook.com/ebook.html.
 - `npm run docs:all` to generate locally
 - `npm run docs:publish` to publish in gh-pages.
 
+The changelog in the documentation is generated based on Github Pull Requests. For things to show up in the changelog you MUST USE PRs! Rewording is possible by rewriting PR titles.
+
 Validation
 ----------
 
@@ -60,12 +67,13 @@ Validation against Signal K schema can be done
 - by explicitly calling validate packaged as an npm module
 - by using a Chai assertion, available in the npm module
 
-As you can see in the example below the current implementation assumes that the
-input is a subtree under vessels.mmsi path.
-
 ```
-echo '{"navigation":{"courseOverGroundTru":{"value":70.1,"source":{"label":"","type":"NMEA2000","pgn":"130577","src":"160"},"timestamp":"2014-08-15-10:01:35.236"},"speedOverGround":{"value":0.01,"source":{"label":"","type":"NMEA2000","pgn":"130577","src":"160"},"timestamp":"2014-08-15-10:01:35.236"}}}' | bin/validate.js
-Unknown property (not in schema):/vessels/230099999/navigation/courseOverGroundTru
+cat test/data/full-invalid/vessel-mmsi_bad.json | bin/validate.js
+{
+  "errors": [
+    {
+      "message": "String does not match pattern: ^[2-7][0-9]{8}$",
+      "params" .....etc
 ```
 
 ```javascript

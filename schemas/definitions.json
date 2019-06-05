@@ -1,56 +1,67 @@
 {
   "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "https://signalk.github.io/specification/schemas/definitions.json#",
+  "id": "https://signalk.org/specification/1.0.0/schemas/definitions.json#",
   "title": "definitions",
   "description": "Reusable definitions of core object types",
   "definitions": {
     "timestamp": {
       "type": "string",
-      "description": "ISO-8601 (UTC) string representing date and time.",
-      "units": "ISO-8601 (UTC)",
-      "example": "2014-04-10T08:33:53Z"
+      "description": "RFC 3339 (UTC only without local offset) string representing date and time.",
+      "units": "RFC 3339 (UTC)",
+      "example": "2014-04-10T08:33:53Z",
+      "format": "date-time",
+      "pattern" : ".*Z$"
     },
     "source": {
       "type": "object",
-      "description": "Source of data, a record of where the data was received from. An object containing at least the properties defined in 'properties', but can contain anything beyond that.",
+      "description": "Source of data in delta format, a record of where the data was received from. An object containing at least the properties defined in 'properties', but can contain anything beyond that.",
       "required": [
         "label"
       ],
       "properties": {
         "label": {
           "type": "string",
-          "description":"A label to identify the source bus, eg serial-COM1, eth-local,etc . Can be anything but should follow a predicatable format",
+          "description": "A label to identify the source bus, eg serial-COM1, eth-local,etc . Can be anything but should follow a predicatable format",
           "example": "N2K-1"
         },
         "type": {
           "type": "string",
-          "description":"A human name to identify the type. NMEA0183, NMEA2000, signalk",
+          "description": "A human name to identify the type. NMEA0183, NMEA2000, signalk",
           "default": "NMEA2000",
           "example": "NMEA2000"
         },
         "src": {
           "type": "string",
           "description": "NMEA2000 src value or any similar value for encapsulating the original source of the data",
-          "example":"36"
+          "example": "36"
         },
         "pgn": {
           "type": "number",
           "description": "NMEA2000 pgn of the source message",
-          "example":"130312"
+          "example": "130312"
+        },
+        "instance": {
+          "type": "string",
+          "description": "NMEA2000 instance value of the source message"
         },
         "sentence": {
           "type": "string",
           "description": "Sentence type of the source NMEA0183 sentence, $GP[RMC],092750.000,A,5321.6802,N,00630.3372,W,0.02,31.66,280511,,,A*43",
-          "example":"RMC"
+          "example": "RMC"
         },
         "talker": {
           "type": "string",
           "description": "Talker id of the source NMEA0183 sentence, $[GP]RMC,092750.000,A,5321.6802,N,00630.3372,W,0.02,31.66,280511,,,A*43",
-          "example":"GP"
+          "example": "GP"
         },
-        "instance": {
-					"type": "string"			
+        "aisType": {
+          "type": "number",
+          "multipleOf" : 1,
+          "minimum": 1,
+          "maximum": 27,
+          "description": "AIS Message Type",
+          "example":"15"
         }
       }
     },
@@ -59,12 +70,13 @@
       "type": "string",
       "pattern": "^[A-Za-z0-9-_.]*$",
       "description": "Reference to the source under /sources. A dot spearated path to the data. eg [type].[bus].[device]",
-      "example":"NMEA0183.COM1.GP"
+      "example": "NMEA0183.COM1.GP"
     },
 
     "version": {
       "type": "string",
       "description": "Version of the Signal K schema/APIs used by the root object.",
+      "pattern": "^[0-9]{1,3}[.][0-9]{1,2}[.][0-9]{1,2}($|-[a-zA-Z0-9]+$)",
       "example": "1.0.0"
     },
     "units": {
@@ -74,13 +86,13 @@
         "s": {
           "display": "s",
           "quantity": "Time",
-          "quantityDisplay": "T",
+          "quantityDisplay": "t",
           "description": "Elapsed time (interval) in seconds"
         },
         "Hz": {
           "display": "Hz",
           "quantity": "Frequency",
-          "quantityDisplay": "F",
+          "quantityDisplay": "f",
           "description": "Frequency in Hertz"
         },
         "m3": {
@@ -90,10 +102,22 @@
           "description": "Volume in cubic meters"
         },
         "m3/s": {
-          "display": "m3/s",
+          "display": "m\u00b3/s",
           "quantity": "Flow",
           "quantityDisplay": "Q",
           "description": "Liquid or gas flow in cubic meters per second"
+        },
+        "kg/s": {
+          "display": "kg/s",
+          "quantity": "Mass flow rate",
+          "quantityDisplay": "\u1e41",
+          "description": "Liquid or gas flow in kilograms per second"
+        },
+        "kg/m3": {
+          "display": "kg/m\u00b3",
+          "quantity": "Density",
+          "quantityDisplay": "\u03c1",
+          "description": "Density in kg per cubic meter"
         },
         "deg": {
           "display": "\u00b0",
@@ -116,7 +140,7 @@
         "A": {
           "display": "A",
           "quantity": "Current",
-          "quantityDisplay": "i",
+          "quantityDisplay": "I",
           "description": "Electrical current in ampere"
         },
         "C": {
@@ -135,7 +159,13 @@
           "display": "W",
           "quantity": "Power",
           "quantityDisplay": "P",
-          "description": "Electrical power in watt"
+          "description": "Power in watt"
+        },
+        "Nm": {
+          "display": "Nm",
+          "quantity": "Torque",
+          "quantityDisplay": "\u03c4",
+          "description": "Torque in Newton meter"
         },
         "J": {
           "display": "J",
@@ -157,9 +187,9 @@
         },
         "m/s": {
           "display": "m/s",
-          "quantity": "Velocity",
+          "quantity": "Speed",
           "quantityDisplay": "v",
-          "description": "Velocity in meters per second"
+          "description": "Speed in meters per second"
         },
         "m2": {
           "display": "\u33a1",
@@ -170,7 +200,7 @@
         "K": {
           "display": "K",
           "quantity": "Temperature",
-          "quantityDisplay": "t",
+          "quantityDisplay": "T",
           "description": "Temperature in kelvin"
         },
         "Pa": {
@@ -215,21 +245,49 @@
           "quantityDisplay": "B",
           "description": "Magnetic field strength in tesla"
         },
+        "Lux": {
+          "display": "lx",
+          "quantity": "Light Intensity",
+          "quantityDisplay": "Ev",
+          "description": "Light Intensity in lux"
+        },
         "Pa/s": {
           "display": "Pa/s",
           "quantity": "Pressure rate",
           "quantityDisplay": "R",
           "description": "Pressure change rate in pascal per second"
+        },
+        "Pa.s": {
+          "display": "Pa s",
+          "quantity": "Viscosity",
+          "quantityDisplay": "\u03bc",
+          "description": "Viscosity in pascal seconds"
         }
       }
     },
     "mmsi": {
       "type": "string",
       "description": "Maritime Mobile Service Identity (MMSI). Has to be 9 digits. See http://en.wikipedia.org/wiki/Maritime_Mobile_Service_Identity for information.",
-      "pattern": "^[2-7][0-9]{8,8}$",
-      "maxLength": 9,
-      "minLength": 9,
+      "pattern": "^[2-7][0-9]{8}$",
       "example": "503123456"
+    },
+    "aircraftMmsi": {
+      "type": "string",
+      "description": "Maritime Mobile Service Identity (MMSI) for aircraft. Has to be 9 digits. See http://en.wikipedia.org/wiki/Maritime_Mobile_Service_Identity for information.",
+      "pattern": "^1[0-9]{8}$",
+      "example": "103123456"
+    },
+    "atonMmsi": {
+      "type": "string",
+      "description": "Maritime Mobile Service Identity (MMSI) for . Has to be 9 digits. See http://en.wikipedia.org/wiki/Maritime_Mobile_Service_Identity for information.",
+      "pattern": "^99[0-9]{7}$",
+      "example": "993123456"
+    },
+    "sarMmsi": {
+      "type": "string",
+      "description": "Maritime Mobile Service Identity (MMSI) for . Has to be 9 digits. See http://en.wikipedia.org/wiki/Maritime_Mobile_Service_Identity for information.",
+      "pattern": "^97[0-9]{7}$",
+      "example": "973123456"
     },
     "uuid": {
       "type": "string",
@@ -240,7 +298,7 @@
     "url": {
       "type": "string",
       "description": "A location of a resource, potentially relative. For hierarchical schemes (like http), applications must resolve relative URIs (e.g. './v1/api/'). Implementations should support the following schemes: http:, https:, mailto:, tel:, and ws:.",
-      "example":"http://localhost:8080/signalk/v1/api/vessels/self/environment"
+      "example": "http://localhost:8080/signalk/v1/api/vessels/self/environment"
     },
 
     "commonValueFields": {
@@ -350,6 +408,51 @@
         }
       }
     },
+
+
+    "datetimeValue": {
+      "type": "object",
+      "description": "Data should be of type number.",
+      "allOf": [{
+        "$ref": "#/definitions/commonValueFields"
+      }, {
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "values": {
+            "type": "object",
+            "patternProperties": {
+              ".*": {
+                "$ref": "#/definitions/valuesDatetimeValue"
+              }
+            }
+          }
+        }
+      }]
+    },
+
+    "valuesDatetimeValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "timestamp": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "pgn": {
+          "type": "number"
+        },
+        "sentence": {
+          "type": "string"
+        }
+      }
+    },
+
+
     "nullValue": {
       "type": "object",
       "description": "Data should be of type NULL.",
@@ -408,6 +511,7 @@
       "description": "The alarm state when the value is in this zone.",
       "default": "normal",
       "enum": [
+        "nominal",
         "normal",
         "alert",
         "warn",
@@ -426,11 +530,12 @@
       "type": "object",
       "title": "Meta schema.",
       "description": "Provides meta data to enable alarm and display configuration.",
+      "required": ["description"],
       "properties": {
         "displayName": {
           "type": "string",
           "title": "DisplayName schema.",
-          "description": "A display name for this value.",
+          "description": "A display name for this value. This is shown on the gauge and should not include units.",
           "example": "Tachometer, Engine 1"
         },
 
@@ -445,16 +550,118 @@
           "type": "string",
           "title": "ShortName schema.",
           "description": "A short name for this value.",
-          "example": "RPM"
+          "example": "Tacho 1"
+        },
+
+        "description": {
+          "type": "string",
+          "title": "Description schema.",
+          "description": "Description of the SK path.",
+          "example": "Engine revolutions (x60 for RPM)"
+        },
+
+        "enum": {
+          "type": "array",
+          "title": "Permissible values",
+          "description": "List of permissible values",
+          "example": ["stopped", "started", "unusable"]
         },
 
         "gaugeType": {
           "type": "string",
           "title": "gaugeType schema.",
-          "description": "The type of gauge necessary to display this value.",
+          "description": "gaugeType is deprecated. The type of gauge necessary to display this value.",
           "example": "sparkline"
         },
 
+        "displayScale": {
+          "type": "object",
+          "title": "Scale to display.",
+          "description": "Gives details of the display scale against which the value should be displayed",
+          "properties": {
+            "lower": {
+              "type": "number",
+              "title": "Display lower limit.",
+              "description": "The suggested lower limit for the pointer (or equivalent) on the display",
+              "example": 0
+            },
+            "upper": {
+              "type": "number",
+              "title": "Display upper limit.",
+              "description": "The suggested upper limit for the pointer (or equivalent) on the display",
+              "example": 4000
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "logarithmic",
+                "squareroot",
+                "power"
+              ],
+              "title": "Scale type used on the display.",
+              "description": "The suggested type of scale to use",
+              "example": "logarithmic"
+            },
+            "power": {
+              "type": "number",
+              "title": "Selected power for display scale",
+              "description": "The power to use when the displayScale/type is set to 'power'. Can be any numeric value except zero.",
+              "example": 2
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "lower",
+                "upper"
+              ],
+              "properties": {
+                "lower": {},
+                "upper": {}
+              },
+              "additionalProperties": false
+            },
+            {
+              "required": [
+                "lower",
+                "upper",
+                "type"
+              ],
+              "properties": {
+                "lower": {},
+                "upper": {},
+                "type": {
+                  "enum": [
+                    "linear",
+                    "squareroot",
+                    "logarithmic"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "required": [
+                "lower",
+                "upper",
+                "type",
+                "power"
+              ],
+              "properties": {
+                "lower": {},
+                "upper": {},
+                "type": {
+                  "enum": [
+                    "power"
+                  ]
+                },
+                "power": {}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
         "units": {
           "type": "string",
           "title": "units schema.",
@@ -510,7 +717,7 @@
           "type": "array",
           "title": "Zones schema.",
           "description": "The zones defining the range of values for this signalk value.",
-          "items": [{
+          "items": {
             "type": "object",
             "title": "zone",
             "description": "A zone used to define the display and alarm state when the value is in between bottom and top.",
@@ -546,7 +753,7 @@
                 "default": "Warning"
               }
             }
-          }]
+          }
         }
       }
     },
@@ -560,29 +767,82 @@
       "type": "object",
       "title": "position",
       "description": "The position in 3 dimensions",
-      "allOf": [{
-        "$ref": "#/definitions/commonValueFields"
-      }, {
-        "properties": {
-          "longitude": {
-            "type": "number",
-            "description": "Longitude",
-            "units": "deg",
-            "example": 4.98765245
-          },
-          "latitude": {
-            "type": "number",
-            "description": "Latitude",
-            "units": "deg",
-            "example": 52.0987654
-          },
-          "altitude": {
-            "type": "number",
-            "description": "Altitude",
-            "units": "m"
+      "allOf": [
+        {
+          "$ref": "#/definitions/commonValueFields"
+        },
+        {
+          "properties": {
+            "value": {
+              "type": "object",
+              "required": [
+                "latitude",
+                "longitude"
+              ],
+              "properties": {
+                "longitude": {
+                  "type": "number",
+                  "description": "Longitude",
+                  "units": "deg",
+                  "example": 4.98765245
+                },
+                "latitude": {
+                  "type": "number",
+                  "description": "Latitude",
+                  "units": "deg",
+                  "example": 52.0987654
+                },
+                "altitude": {
+                  "type": "number",
+                  "description": "Altitude",
+                  "units": "m"
+                }
+              }
+            },
+            "values": {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "type": "object",
+                  "properties": {
+                    "timestamp": {
+                      "$ref": "#/definitions/timestamp"
+                    },
+                    "pgn": {
+                      "type": "number"
+                    },
+                    "sentence": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "longitude": {
+                          "type": "number",
+                          "description": "Longitude",
+                          "units": "deg",
+                          "example": 4.98765245
+                        },
+                        "latitude": {
+                          "type": "number",
+                          "description": "Latitude",
+                          "units": "deg",
+                          "example": 52.0987654
+                        },
+                        "altitude": {
+                          "type": "number",
+                          "description": "Altitude",
+                          "units": "m"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
-      }]
+      ]
     },
     "waypoint": {
       "type": "object",

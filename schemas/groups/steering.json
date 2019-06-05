@@ -1,7 +1,7 @@
 {
   "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "https://signalk.github.io/specification/schemas/groups/steering.json#",
+  "id": "https://signalk.org/specification/1.0.0/schemas/groups/steering.json#",
   "description": "Schema describing the steering child-object of a vessel.",
   "title": "steering",
   "properties": {
@@ -75,33 +75,22 @@
           "title": "target",
           "description": "Autopilot target",
           "properties": {
-            "angle": {
-              "description": "Target heading for autopilot, relative to magnetic North or Apparent wind +port -starboard",
+            "windAngleApparent": {
+              "description": "Target angle to steer, relative to Apparent wind +port -starboard",
               "$ref": "../definitions.json#/definitions/numberValue",
               "units": "rad"
             },
-
-            "reference": {
-              "type": "object",
-              "description": "Current source of heading information",
-              "allOf": [
-                {
-                  "$ref": "../definitions.json#/definitions/commonValueFields"
-                },
-                {
-                  "properties": {
-                    "value": {
-                      "type": "string",
-                      "enum": [
-                        "compass",
-                        "wind",
-                        "gps"
-                      ]
-                    }
-                  }
-                }
-              ]
+            "headingTrue": {
+              "description": "Target heading for autopilot, relative to North",
+              "$ref": "../definitions.json#/definitions/numberValue",
+              "units": "rad"
+            },
+            "headingMagnetic": {
+              "description": "Target heading for autopilot, relative to Magnetic North",
+              "$ref": "../definitions.json#/definitions/numberValue",
+              "units": "rad"
             }
+
           }
         },
 
